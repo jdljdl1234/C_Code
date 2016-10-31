@@ -1,0 +1,3 @@
+makehw3: showxbits.c xbits.c xbits.h
+	gcc -g showxbits.c xbits.c -o showxbits
+	mv showxbits.exe showxbits

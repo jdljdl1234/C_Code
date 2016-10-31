@@ -1,0 +1,21 @@
+# makefile for building cs240 alloc project programs using the 
+# tell make to use gcc as C compiler, -g -W... for C compiler flags--
+# check "man gcc" to find out what -W flags do
+CC = gcc -m32
+OBJS = alloctest.o alloc.o
+CFLAGS = -g -Wall -Wstrict-prototypes -Wmissing-prototypes \
+		-Wno-uninitialized -Wshadow -ansi
+
+alloctest:  $(OBJS)
+	$(CC) -g -o alloctest $(OBJS)
+
+# make knows to use $(CC) and $(CFLAGS)	
+alloctest.o: alloctest.c alloc.h
+	$(CC) -g -c alloctest.c
+
+alloc.o: alloc.c alloc.h
+	$(CC) -g -c alloc.c
+
+clean:
+	rm -f *.o alloctest core
+

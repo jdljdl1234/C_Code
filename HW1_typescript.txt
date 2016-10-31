@@ -1,0 +1,23 @@
+Script started on Sat 02 Feb 2013 10:16:33 AM EST
+jlantos1@vm71:~/test$ ls -l
+total 1
+-rw-r--r-- 1 jlantos1 crontab 62 Jan 31 14:51 hello.c
+-rw-r--r-- 1 jlantos1 crontab  0 Feb  2  2013 typescript
+jlantos1@vm71:~/test$ cat hello.c
+#include <stdio.h>
+
+main()
+
+{
+
+	printf("hello, world\n");
+
+}
+
+jlantos1@vm71:~/test$ gcc hello.c -o hello
+jlantos1@vm71:~/test$ ./hello
+hello, world
+jlantos1@vm71:~/test$ exit
+exit
+
+Script done on Sat 02 Feb 2013 10:16:57 AM EST

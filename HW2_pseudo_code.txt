@@ -1,0 +1,71 @@
+
+/* James Lantos, CS240, HW2, No. 1 						*/
+
+/* This is a summary of key steps in a program which removes 			*/
+/* blanks and tabs from the end of lines (before the EOF or /n) 		*/
+/* which are read in from standard input, and which prints those lines 		*/
+/* but doesnt print a line with just blanks/tabs 				*/
+/* Basic code form has been adapted from K/R textbook code 			*/
+
+/* ==== PSEUDOCODE: SUMMARY OF STEPS ============================= 		*/
+/* 1. Read line into array.  							*/
+/* 2. Step through the length of inputted line (while..)			*/
+/* 2. 		Test for blanks/tabs. 						*/
+/* 3. 		While blanks/tabs are found, keep going. No blanks/tabs,quit.	*/	
+/* 4. 		If you find valid characters--then you have a line. 		*/
+/* 5. 		Move to add trailing new line \n and \0; 			*/
+/* 6. 		Otherwise if a line with just blanks/tab is 			*/
+/*       		found .. do not print it. Go to retrieve next line.	*/
+
+
+/* James Lantos, CS240, HW2, No. 2 						*/
+
+/* This is a summary of steps in a program which reads lines 			*/
+/* froms stdin and writes reversed lines to stdout until it encounters an EOF. 	*/
+/* Basic code form has been adapted from K/R textbook code 			*/
+
+/* ==== PSEUDOCODE: SUMMARY OF STEPS ============================= 		*/
+/* Read the new line in 							*/
+/* Copy the line to an array 							*/
+/* Reverse the order of the characters in the line 				*/
+/* Print out the reversed line 							*/
+
+
+/* James Lantos, CS240, HW2, No. 3 					*/
+
+/* Program should read characters from stdin and write to stdout. 	*/
+/* For each char input, it prints on a single line. 			*/
+/*  a ) the ASCII name of the character. 				*/
+/*  b ) the hex value of the character.					*/
+/* Program stops when encounters an EOF condition on stdin. 		*/
+
+/* Basic code form has been adapted from K/R textbook code 		*/
+/* ..and code supplied by professor 					*/
+
+/* ===== PSEUDO CODE / SCHEMATIC =====					*/
+/* 1. Stdin file expected						*/
+/* 2. ASCII values stored into array asciiname				*/
+/* 3. Get the next character from stdin 				*/
+/* 4. Print the string and hex value					*/
+
+/* James Lantos, CS240, HW2, No. 4 									*/
+
+/* Program should read characters from stdin and write to stdout. 	*/
+/* For each char input, it prints a histogram of. 			*/
+/*  a ) The Decimal value of the character inputted 			*/
+/*  b ) The hex value of the character inputted				*/
+/* 	c ) the ASCII name of the character inputted 	 		*/
+/*  d ) The count of  the character inputted				*/
+/* Program stops when encounters an EOF condition on stdin. 		*/
+
+/* Basic code form has been adapted from K/R textbook code 		*/
+/* ..and code supplied by professor 					*/
+
+/* ===== PSEUDO CODE / SCHEMATIC =====					*/
+/* 1. Stdin file expected											*/
+/* 2. Character values c=getchar() named in array ndigit[c]		*/
+/* 3. Character counts stored with each character array name 		*/
+/* 4. For non zero counts, print character in its various forms ..	*/
+/* 5.  ...decimal, hex, ascii and associated count			*/
+
+

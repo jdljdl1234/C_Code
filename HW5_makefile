@@ -1,0 +1,38 @@
+
+# makefile for hw5
+# format of entries;
+
+# < target file >:  	< source files >
+# 			< compilation command >
+
+# make will look at the last-write dates of each file, and if the target
+# file hasn't been updated since the source files were last modified,
+# it will update the target file by executing the shell command. Note that
+# the spacing to the < source files > and < compilation command > MUST be
+# done with tabs, not spaces.
+#
+# now here is a Macro as defined in Glass Unix.
+
+cc =		gcc -m32
+
+explorit:		explore.o 
+		$(cc) -g -lm -o explorit explore.o  
+
+# note that if calc.h changes, main.c and getop.c must be recompiled
+
+explore.o:	explore.c 
+		$(cc) -g -c explore.c
+
+
+# this tells make what to make if you just type 'make'; if this isn't there,
+# the first rule in the file will be the default.
+
+
+# here is a rule to clean up the directory when calcit is final and you want
+# to reduce the clutter in the listing. Note that clean doesn't need to
+# depend on any file modification time, so the < source files > position is
+# just left empty.
+
+clean:
+		rm *.o
+

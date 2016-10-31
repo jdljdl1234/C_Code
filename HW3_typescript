@@ -1,0 +1,315 @@
+Script started on Wed 13 Mar 2013 12:01:13 PM EDT
+jlantos1@vm71:~/cs240/hw3$ ls -l
+total 32
+-rw-r--r-- 1 jlantos1 cs240-1G    79 Mar  8 09:46 makefile
+-rwxr-xr-x 1 jlantos1 cs240-1G 11521 Mar  9 20:01 showxbits
+-rw-r--r-- 1 jlantos1 cs240-1G  1249 Mar 13 12:00 showxbits.c
+-rw-r--r-- 1 jlantos1 cs240-1G    24 Mar  9 08:05 testdata
+-rw-r--r-- 1 jlantos1 cs240-1G     0 Mar 13  2013 typescript
+-rw-r--r-- 1 jlantos1 cs240-1G 10430 Mar  9 20:19 typescript1
+-rw-r--r-- 1 jlantos1 cs240-1G  2695 Mar  9 08:01 xbits.c
+-rw-r--r-- 1 jlantos1 cs240-1G  1077 Mar  9 07:25 xbits.h
+jlantos1@vm71:~/cs240/hw3$ make
+gcc -g showxbits.c xbits.c -o showxbits
+showxbits.c: In function ‘main’:
+showxbits.c:36:2: warning: incompatible implicit declaration of built-in function ‘strcpy’ [enabled by default]
+jlantos1@vm71:~/cs240/hw3$ cat c[Kxbits.h
+/* James Lantos, CS240, HW3, No. 2a Integer -> Dec to Hex Conversion  	*/
+/* March 9 2013 *//* xbits.h 	*/
+/* Header file with global constant / functional prototypes 		*//* Some code adapted from K/R textbook code 						*//* ..and code supplied by professor 								*/
+#define ENOUGH_SPACE (2*sizeof(int)+1) /* enough space for hex character - 9 bytes on 32 bit machine */
+/* function returns in hexstring the char sequence of hex digits * '0' ... 'F' used to represent int n. It is the caller's responsibility * to have allocated at least 1+2*sizeof(int) positions in bitstring. * itox must provide the concluding \0 in bitstring. */
+void itox(char hexstring[], int n); /* source on right, target on left */void reverse(char s[], int n);int power(int base, int n);
+/* function returns in integer the decimal representation of * the hex characters in hexstring. The function needs to check if hexstring * contains only the characters '0' ... 'F'. */
+ int xtoi(char hexstring[], int s); /* return the converted integer */ 
+jlantos1@vm71:~/cs240/hw3$ cat xbits.c
+/* James Lantos, CS240, HW3, No. 2a Integer -> Dec to Hex Conversion  	*/
+/* March 9 2013 */
+/* xbits.c 	*/
+
+/* Program has functions called from main to take integer value		*/
+/* 	 and converts to  hex string 									*/
+/* Some code adapted from K/R textbook code 						*/
+/* ..and code supplied by professor 								*/
+
+/*  itox function   							 					*/
+/*  initialize variables			 							*/
+/*  while 							 							*/
+/*     	cycle integer through n%16 remainder calcs until n < 15	*/
+/* 		declare hexstring array items = i++ values  			*/
+/*      set hesxtring array elements to hexvalue array elements */
+/* 		while 													*/
+/*  		once done, if any space left in array, fill with zeros */
+
+/* 	reverse function	 										*/
+/* 	perform string reversal 									*/
+
+/*  xtoi function   							 				*/
+/*  initialize variables			 							*/
+/*  while 							 							*/
+/*     	cycle through each value in the hex string 				*/
+/* 		perform multiplier algorithm on each as per professor  	*/
+/*      call power function to perform expoential conversions  	*/
+/* 		sum up the decimal value of each converted hex value 	*/
+/* 		return the sum value to main 							*/
+
+
+#include <stdio.h>
+#include "xbits.h"
+
+
+void itox(char hexstring[], int n) { 
+
+   printf("\n...in itox, processing %d\n",n);
+    int i=0;
+    char hexvalues[16] =  {"0123456789ABCDEF"};
+	hexstring[i]= 0x00;
+    i++;        
+    while (n>15) {
+          hexstring[i]=hexvalues[n%16];
+          n=n/16;
+		  i++;
+          }
+		hexstring[i] = hexvalues[n%16];
+		while (i != ENOUGH_SPACE) {
+		hexstring[++i] = 0x30;		
+	}
+}
+
+int xtoi(char hexstring1[], int s) { 
+
+   printf("\n...in xtoi, processing %s\n",hexstring1);
+    int i=s-2, j=0, k=0;
+	while (k < s) {
+		if (k==0)
+		j += (hexstring1[i]-'0');
+		else {
+			if (hexstring1[i] >= '0' && hexstring1[i] <= '9')
+			j+= ((hexstring1[i]-'0')*power(16,k));
+				else 
+					switch (hexstring1[i]) {
+					case 'A': j+= (10*power(16,k));
+						break;
+					case 'B': j+= (11*power(16,k));
+						break;
+					case 'C': j+= (12*power(16,k));
+						break;
+					case 'D': j+= (13*power(16,k));
+						break;
+					case 'E': j+= (14*power(16,k));
+						break;
+					case 'F': j+= (15*power(16,k));
+					default:
+						break;
+					}
+			}
+		  i--;
+		  k++;
+		  }
+	      return j;
+}
+	
+
+/* reverse: reverse's characters; from HW2 */
+
+void reverse(char s[], int n) {							 
+    int in, out=n-1;
+    char holder;
+
+    for (in = 0; in < out; in++) {					
+        holder = s[in];
+        s[in] = s[out];
+        s[out] = holder;
+        out--;
+    }
+}
+
+
+/* power: raise base to nth power; n>=0 from K/R */
+
+int power(int base, int n)
+{
+	int p;
+		
+	for (p=1; n>0; --n)
+		p=p*base;
+	return p;
+}
+
+jlantos1@vm71:~/cs240/hw3$ cat showxbits.c
+
+/* James Lantos, CS240, HW3, No. 2a Integer -> Dec to Hex Conversion  	*//* March 9 2013 *//* showxbits.c 	*/
+/* Program main takes integer values and converts to hex 	 		*//* Some code adapted from K/R textbook code 						*//* ..and code supplied by professor 								*/
+/* ===== PSEUDO CODE ======											*//*  Read from scanf input variables(works for !> than ENOUGH_SPACE)	*//*  hexstring and hexstring1 array size set to ENOUGH_SPACE 		*//*  itox does integer to hex conversion								*//*  reverse - reverses string chars in array						*//*  xtoi does hex to decimal conversion								*//*  Print result 													*/	
+
+#include <stdio.h>#include "xbits.h"
+int main() {
+
+    char hexstring[ENOUGH_SPACE];    char hexstring1[ENOUGH_SPACE];
+	int n;
+	while(scanf("%d", &n)==1) {	int m=0;
+	itox(hexstring, n);  	reverse(hexstring, ENOUGH_SPACE);	printf("Integer: %d equals hex string: %s\n", n, hexstring);	printf("The %%x representation of %%d string matches: %x\n", n);
+	strcpy(hexstring1, hexstring);    m= xtoi(hexstring1, ENOUGH_SPACE);
+
+	printf("Hexstring: %s equals original decimal value %d\n\n", hexstring1, m);
+}  return 0;  /* everything is just fine */}
+jlantos1@vm71:~/cs240/hw3$ cat testdata
+333952913923
+jlantos1@vm71:~/cs240/hw3$ ./showxbits < testdata
+
+...in itox, processing 3
+Integer: 3 equals hex string: 00000003
+The %x representation of %d string matches: 3
+
+...in xtoi, processing 00000003
+Hexstring: 00000003 equals original decimal value 3
+
+
+...in itox, processing 33
+Integer: 33 equals hex string: 00000021
+The %x representation of %d string matches: 21
+
+...in xtoi, processing 00000021
+Hexstring: 00000021 equals original decimal value 33
+
+
+...in itox, processing 9
+Integer: 9 equals hex string: 00000009
+The %x representation of %d string matches: 9
+
+...in xtoi, processing 00000009
+Hexstring: 00000009 equals original decimal value 9
+
+
+...in itox, processing 5
+Integer: 5 equals hex string: 00000005
+The %x representation of %d string matches: 5
+
+...in xtoi, processing 00000005
+Hexstring: 00000005 equals original decimal value 5
+
+
+...in itox, processing 291
+Integer: 291 equals hex string: 00000123
+The %x representation of %d string matches: 123
+
+...in xtoi, processing 00000123
+Hexstring: 00000123 equals original decimal value 291
+
+
+...in itox, processing 3923
+Integer: 3923 equals hex string: 00000F53
+The %x representation of %d string matches: f53
+
+...in xtoi, processing 00000F53
+Hexstring: 00000F53 equals original decimal value 3923
+
+jlantos1@vm71:~/cs240/hw3$ run[K[K[Kgdb showxbits [K
+GNU gdb (Ubuntu/Linaro 7.4-2012.04-0ubuntu2.1) 7.4-2012.04
+Copyright (C) 2012 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "x86_64-linux-gnu".
+For bug reporting instructions, please see:
+<http://bugs.launchpad.net/gdb-linaro/>...
+Reading symbols from /courses/cs240/s13/cheungr/jlantos1/hw3/showxbits...done.
+(gdb) b main
+Breakpoint 1 at 0x40061c: file showxbits.c, line 22.
+(gdb) run
+Starting program: /courses/cs240/s13/cheungr/jlantos1/hw3/showxbits 
+
+Breakpoint 1, main () at showxbits.c:22
+22	int main() {
+(gdb) s
+28		while(scanf("%d", &n)==1) {
+(gdb) s
+3
+29		int m=0;
+(gdb) s
+31		itox(hexstring, n);  
+(gdb) s
+itox (hexstring=0x7fffffffeb10 "\001", n=3) at xbits.c:36
+36	void itox(char hexstring[], int n) { 
+(gdb) s
+38	   printf("\n...in itox, processing %d\n",n);
+(gdb) s
+
+...in itox, processing 3
+39	    int i=0;
+(gdb) n
+40	    char hexvalues[16] =  {"0123456789ABCDEF"};
+(gdb) n
+41		hexstring[i]= 0x00;
+(gdb) n
+42	    i++;        
+(gdb) n
+43	    while (n>15) {
+(gdb) n
+48			hexstring[i] = hexvalues[n%16];
+(gdb) n
+49			while (i != ENOUGH_SPACE) {
+(gdb) p i
+$1 = 1
+(gdb) p hexstring[i]
+$2 = 51 '3'
+(gdb) l
+44	          hexstring[i]=hexvalues[n%16];
+45	          n=n/16;
+46			  i++;
+47	          }
+48			hexstring[i] = hexvalues[n%16];
+49			while (i != ENOUGH_SPACE) {
+50			hexstring[++i] = 0x30;		
+51		}
+52	}
+53	
+(gdb) bt
+#0  itox (hexstring=0x7fffffffeb10 "", n=3) at xbits.c:49
+#1  0x0000000000400648 in main () at showxbits.c:31
+(gdb) help
+List of classes of commands:
+
+aliases -- Aliases of other commands
+breakpoints -- Making program stop at certain points
+data -- Examining data
+files -- Specifying and examining files
+internals -- Maintenance commands
+obscure -- Obscure features
+running -- Running the program
+stack -- Examining the stack
+status -- Status inquiries
+support -- Support facilities
+tracepoints -- Tracing of program execution without stopping the program
+user-defined -- User-defined commands
+
+Type "help" followed by a class name for a list of commands in that class.
+Type "help all" for the list of all commands.
+Type "help" followed by command name for full documentation.
+Type "apropos word" to search for commands related to "word".
+Command name abbreviations are allowed if unambiguous.
+(gdb) c
+Continuing.
+Integer: 3 equals hex string: 00000003
+The %x representation of %d string matches: 3
+
+...in xtoi, processing 00000003
+Hexstring: 00000003 equals original decimal value 3
+
+
+^C
+Program received signal SIGINT, Interrupt.
+0x00007ffff7b018a0 in read () from /lib/x86_64-linux-gnu/libc.so.6
+(gdb) exit
+Undefined command: "exit".  Try "help".
+(gdb) qut[Kit
+A debugging session is active.
+
+	Inferior 1 [process 1731] will be killed.
+
+Quit anyway? (y or n) y
+jlantos1@vm71:~/cs240/hw3$ ex[K[Kexist[K[Kt
+exit
+
+Script done on Wed 13 Mar 2013 12:04:56 PM EDT

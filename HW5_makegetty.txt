@@ -1,0 +1,27 @@
+# James Lantos, CS240, HW5 */
+# April 11, 2013 */
+#
+# maketail
+#
+#
+
+# make compiles tail.c and linholder.c with the appropriate dependencies, and builds
+# the executable "tail" (tail should also be default target).  Also provide "make clean"
+# to remove the intermediate object files.  Also include the option to build the executable using the
+# -m32 switch for a 32-bit application
+ 
+cc =		gcc -m32
+
+tail:		tail.o lineholder.o 
+		$(cc) -g -lm -o tail tail.o lineholder.o  
+
+# note that if lineholder.h changes, tail.c and lineholder.c must be recompiled
+
+tail.o:		tail.c lineholder.h
+		$(cc) -g -c tail.c
+
+lineholder.o:	lineholder.c lineholder.h
+		$(cc) -g -c lineholder.c
+
+clean:
+		rm *.o

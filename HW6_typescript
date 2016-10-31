@@ -1,0 +1,383 @@
+Script started on Tue 23 Apr 2013 09:44:06 AM EDT
+jlantos1@vm71:~/cs240/hw6$ li[Ks -l
+total 32
+-rw-r--r-- 1 jlantos1 cs240-1G   931 Apr 23 07:37 getch.c
+-rw-r--r-- 1 jlantos1 cs240-1G  2940 Apr 23 09:44 getch.o
+-rw-r--r-- 1 jlantos1 cs240-1G   521 Apr 23 07:34 getty.h
+-rwxr-xr-x 1 jlantos1 cs240-1G 11157 Apr 23 09:44 gettysburg
+-rw-r--r-- 1 jlantos1 cs240-1G   640 Apr 23 09:40 gettysburg.c
+-rw-r--r-- 1 jlantos1 cs240-1G   290 Apr 22 12:39 gettysburg.h
+-rw-r--r-- 1 jlantos1 cs240-1G  3156 Apr 23 09:44 gettysburg.o
+-rw-r--r-- 1 jlantos1 cs240-1G  1458 Apr 20 09:15 gettysburg.txt
+-rw-r--r-- 1 jlantos1 cs240-1G   770 Apr 23 07:37 makegetty
+-rw-r--r-- 1 jlantos1 cs240-1G  1663 Apr 23 07:38 modules.c
+-rw-r--r-- 1 jlantos1 cs240-1G  4896 Apr 23 09:44 modules.o
+-rw-r--r-- 1 jlantos1 cs240-1G     0 Apr 23  2013 typescript
+jlantos1@vm71:~/cs240/hw6$ cat gettsburg[K[K[K[K[K[Ky[Ktysburg.c
+/* James Lantos, CS240, HW6 */
+/* April 21, 2013 */
+/*
+ * gettysburg.c
+ *
+ */
+
+
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+#include "getty.h"
+#define MAXWORD 100
+
+/* ===== PSEUDO CODE ======											*/
+/*  define structure, array vars */
+/*  get stdin file of words */
+/* step through the array of words checking for validity */
+/*  build the tree */
+/*  print the tree */
+
+
+main()
+{
+	struct tnode *root;
+	char word[MAXWORD];
+	root = NULL;
+	while (getword(word, MAXWORD) != EOF) 
+		if (isalpha(word[0]))
+		root = addtree(root, word);
+	treeprint(root);
+	return 0;
+}
+
+
+jlantos1@vm71:~/cs240/hw6$ cat modules.c
+/* James Lantos, CS240, HW6 */
+/* April 21, 2013 */
+/*
+ * modules.c
+ *
+ */
+ 
+
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+#include "getty.h"
+#define MAXWORD 100
+
+
+
+/* addtree: add a node with w, at or below p */
+struct tnode *addtree(struct tnode *p, char *w)
+
+{
+	int cond;
+	
+	if (p == NULL) { /* a new word has arrived */
+		p = mytalloc(); /* make a new node */
+		p->word = mystrdup(w);
+		p->count = 1;
+		p->left = p->right = NULL;
+	} 
+	else if ((cond = strcmp(w, p->word)) == 0)
+		p->count++; /* repeated word */
+	else if (cond < 0) /* less than into left subtree */
+		p->left = addtree(p->left, w);
+	else /* greater than into right subtree */
+		p->right = addtree(p->right, w);
+	return p;
+
+}
+
+ /* treeprint: in-order print of tree p */
+void treeprint(struct tnode *p)
+{
+	if (p != NULL) {
+		treeprint(p->left);
+		printf("%4d %s\n", p->count, p->word);
+		treeprint(p->right);
+	}
+}
+
+
+/* talloc: make a tnode */
+struct tnode *mytalloc(void)
+{
+	return (struct tnode *) malloc(sizeof(struct tnode));
+}
+
+
+char *mystrdup(char *s) /* make a duplicate of s */
+{
+	char *p;
+	
+	p = (char *) malloc(strlen(s)+1); /* +1 for '\0' */
+	if (p != NULL)
+		strcpy(p, s);
+	return p;
+}
+
+
+/* getword: get next word or character from input */
+int getword(char *word, int lim)
+{
+	int c, getch(void);
+	void ungetch(int);
+	char *w = word;
+
+	while (isspace(c = getch()))
+		;
+	if (c != EOF)
+		*w++ = c;
+	if (!isalpha(c)) {
+		*w = '\0';
+		return c;
+	}
+	for ( ; --lim > 0; w++)
+		if (!isalnum(*w = getch())) {
+			ungetch(*w);
+			break;
+	}
+	*w = '\0';
+	return word[0];
+}jlantos1@vm71:~/cs240/hw6$ cat getch.c
+/* James Lantos, CS240, HW6 */
+/* April 23 2013 */
+/*
+ * getch.c
+ *
+ * getch  returns one  character from stdin 
+ * or from the buffer buf if it is not empty
+ * ungetch puts one character in the buffer buf 
+ */
+
+/* Program getch.c is part of the polish calculator program  			*/
+/* Some code adapted from K/R textbook code 						*/
+/* ..and code supplied by professor 								*/
+
+/* ===== PSEUDO CODE ======											*/
+/*  getch / ungetch tests for maxing out size of the buffer (BUFSIZE) */
+
+
+#include <stdio.h>
+#define BUFSIZE 100
+
+char buf[BUFSIZE];        /* buffer for ungetch */
+int  bufp = 0;            /* next free position in buf */
+
+int getch(void)           /* get a (possibly pushed back) character */
+{
+    return(bufp > 0) ? buf[--bufp] : getchar();
+}
+
+void ungetch(int c)        /* push character back on input */
+{
+    if (bufp >= BUFSIZE)
+	printf("ungetch: too many character \n");
+    else
+	buf[bufp++] = c;
+}
+jlantos1@vm71:~/cs240/hw6$ cat he[K[Kgetty.h
+/* James Lantos, CS240, HW6 */
+/* April 21, 2013 */
+/*
+ * getty.h
+ *
+ */
+ 
+struct tnode { /* the tree node: */
+	char *word; /* points to the text */
+	int count; /* number of occurrences */
+	struct tnode *left; /* left child */
+	struct tnode *right; /* right child */
+};
+
+
+
+
+struct tnode *addtree(struct tnode *, char *);
+void treeprint(struct tnode *);
+int getword(char *, int);
+struct tnode *mytalloc(void);
+char *mystrdup(char *); /* make a duplicate of s */
+int getch(void);
+void ungetch(int);
+jlantos1@vm71:~/cs240/hw6$ cat makegetty
+# James Lantos, CS240, HW6 */
+# April 21, 2013 */
+#
+# makegetty
+#
+#
+
+
+# make compiles tail.c and linholder.c with the appropriate dependencies, and builds
+# the executable "tail" (tail should also be default target).  Also provide "make clean"
+# to remove the intermediate object files.  Also include the option to build the executable using the
+# -m32 switch for a 32-bit application
+ 
+cc =		gcc -m32
+
+gettysburg:		gettysburg.o modules.o getch.o
+		$(cc) -g -lm -o gettysburg gettysburg.o modules.o getch.o  
+
+# note that if getty.h changes, gettysburg.c and modules.c must be recompiled
+
+gettysburg.o:	gettysburg.c getty.h
+		$(cc) -g -c gettysburg.c
+
+modules.o:	modules.c getty.h
+		$(cc) -g -c modules.c
+
+getch.o: 	getch.c getty.h
+		$(cc) -g -c getch.c
+clean:
+		rm *.o
+jlantos1@vm71:~/cs240/hw6$ ./gettysburg < gettysburg.txt
+   1 But
+   1 Four
+   1 God
+   3 It
+   1 Liberty
+   1 Now
+   2 The
+   2 We
+   7 a
+   1 above
+   1 add
+   1 advanced
+   1 ago
+   1 all
+   1 altogether
+   6 and
+   1 any
+   3 are
+   1 as
+   1 battle
+   2 be
+   1 before
+   1 birth
+   1 brave
+   1 brought
+   1 but
+   1 by
+   5 can
+   1 cause
+   1 civil
+   1 come
+   2 conceived
+   1 consecrate
+   1 consecrated
+   1 continents
+   1 created
+   3 dead
+   2 dedicate
+   4 dedicated
+   1 detract
+   2 devotion
+   1 did
+   1 died
+   1 do
+   1 earth
+   1 endure
+   1 engaged
+   1 equal
+   2 far
+   1 fathers
+   2 field
+   1 final
+   1 fitting
+   5 for
+   1 forget
+   1 forth
+   1 fought
+   1 freedom
+   2 from
+   1 full
+   2 gave
+   1 government
+   3 great
+   1 ground
+   1 hallow
+   5 have
+   8 here
+   1 highly
+   1 honored
+   4 in
+   1 increased
+   3 is
+   2 it
+   1 larger
+   1 last
+   1 little
+   1 live
+   1 lives
+   2 living
+   2 long
+   1 measure
+   2 men
+   1 met
+   1 might
+   5 nation
+   1 never
+   2 new
+   1 nobly
+   1 nor
+   5 not
+   1 note
+   5 of
+   2 on
+   2 or
+   2 our
+   3 people
+   1 perish
+   1 place
+   1 poor
+   1 portion
+   1 power
+   1 proper
+   1 proposition
+   2 rather
+   1 remaining
+   1 remember
+   1 resolve
+   1 resting
+   1 say
+   1 score
+   1 sense
+   1 seven
+   3 shall
+   1 should
+   3 so
+   1 struggled
+   1 take
+   1 task
+   1 testing
+  13 that
+   9 the
+   1 their
+   2 these
+   3 they
+   4 this
+   1 those
+   1 thus
+   8 to
+   1 under
+   1 unfinished
+   3 us
+   1 vain
+   2 war
+   8 we
+   2 what
+   1 whether
+   2 which
+   3 who
+   1 will
+   1 work
+   1 world
+   1 years
+jlantos1@vm71:~/cs240/hw6$ exit
+exit
+
+Script done on Tue 23 Apr 2013 09:45:58 AM EDT

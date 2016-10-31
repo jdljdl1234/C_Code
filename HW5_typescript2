@@ -1,0 +1,283 @@
+Script started on Mon 15 Apr 2013 09:19:44 AM EDT
+jlantos1@vm71:~/cs240/hw5$ cat tail.c
+/* James Lantos, CS240, HW5 */
+/* April 14, 2013 */
+/*
+ * tail.c
+ *
+ *
+ */
+
+ // interprets the command line argument
+ // calls init_lineholder (int nlines) with the number from the command line
+ // does a loop calling getline and insert_line(char *line)
+ // When getline returns 0 (indicating EOF on stdin), it calls print_lines()
+ // delete_array - frees up memory
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAXLINES 2000
+#define MAXLINE 1000
+
+main (int argc, char *argv[ ])
+{  
+	int i;
+	char *ptr;
+	char line[MAXLINE];
+	int nlines = MAXLINES;
+	nlines = atoi(argv[1]);
+    nlines = -nlines; 
+
+  while(mygetline(line, MAXLINE)) {
+	    ptr = init_lineholder(line);
+        strcpy(ptr, line);
+		insert_line(ptr, nlines);	
+	}
+		print_lines(nlines);
+ 		delete_array(nlines);
+}
+
+jlantos1@vm71:~/cs240/hw5$ cat lineholder.c
+/* James Lantos, CS240, HW5 */
+/* April 14, 2013 */
+/*
+ * lineholder.c
+ *
+ */
+ 
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+ 
+#define MAXLINES 2000
+#define MAXLINE 1000
+
+ 
+static char *ptrarray[MAXLINES];
+static int loop;
+static char *ptrtemp;
+
+
+// take the current line from getline and allocates space for it with malloc
+
+char * init_lineholder(char *a) {
+
+	
+	ptrtemp = (char *) malloc(strlen(a)+1);
+	if (!ptrtemp) {
+			fprintf(stderr, "Out of memory\n");
+			return NULL;
+	}
+	return ptrtemp;
+}	
+
+// takes the malloc'd line, puts it in  ptrarray
+// if you have cycled past the "-n" value (loop), set index value to 0
+// free up the first value, and so forth
+
+
+void insert_line(char *y, int z) {     
+   static int index;
+	
+   if(ptrarray[index]) {
+    if (loop)	
+		{	
+			free(ptrarray[index]);
+			ptrarray[index] = NULL;
+		}
+    }
+   ptrarray[index] = y;
+   index++;
+	
+   
+   // printf("%d\n", index); 
+	if (index >= z) {
+      index = 0;
+	  loop++;
+	}
+}	
+
+// print the -n lines from the array 
+
+void print_lines(int q)
+{
+   int i;
+   	for (i=0; i < q && ptrarray[i] != NULL; i++)  
+	printf("%s\n", ptrarray[i]);
+   
+}
+
+// free the memory
+
+void delete_array(int q)
+{
+  int i;
+  for (i = 0; i < q && ptrarray[i] != NULL; i++)   
+	free(ptrarray[i]);
+}
+
+int mygetline(char s[], int lim)
+{
+   int c, i;
+   i = 0;
+   while(--lim > 0 && (c=getchar()) != EOF && c != '\n')
+      s[i++] = c;
+    if (c == '\n')
+      s[i++] = c;
+    s[i] = '\0';
+    return i;
+}
+
+jlantos1@vm71:~/cs240/hw5$ cat lineholder.h
+/* James Lantos, CS240, HW5 */
+/* April 14, 2013 */
+/*
+ * lineholder.h
+ *
+ */
+
+
+char * init_lineholder(char *line); // stores line in malloc'd array
+void insert_line(char *ptrarray[], int nlines); // adds line to buffer 
+int mygetline(char s[], int lim); // gets lines from file
+void print_lines(char *ptrarray[], int nlines); // prints lines
+void delete_array(int q); // frees space in arrayjlantos1@vm71:~/cs240/hw5$ cat maketail
+# James Lantos, CS240, HW5 */
+# April 11, 2013 */
+#
+# maketail
+#
+#
+
+# make compiles tail.c and linholder.c with the appropriate dependencies, and builds
+# the executable "tail" (tail should also be default target).  Also provide "make clean"
+# to remove the intermediate object files.  Also include the option to build the executable using the
+# -m32 switch for a 32-bit application
+ 
+cc =		gcc -m32
+
+tail:		tail.o lineholder.o 
+		$(cc) -g -lm -o tail tail.o lineholder.o  
+
+# note that if lineholder.h changes, tail.c and lineholder.c must be recompiled
+
+tail.o:		tail.c lineholder.h
+		$(cc) -g -c tail.c
+
+lineholder.o:	lineholder.c lineholder.h
+		$(cc) -g -c lineholder.c
+
+clean:
+		rm *.o
+jlantos1@vm71:~/cs240/hw5$ cat test9[K0.[K[K1.in
+cat: test1.in: No such file or directory
+jlantos1@vm71:~/cs240/hw5$ cat tail1.in
+1. Now is the time
+2. for all good men
+3. to come to the
+4. aid of their country.
+5. Now is the time
+6. for all good men
+7. (less than 10 lines)
+jlantos1@vm71:~/cs240/hw5$ cat tail2.in
+1. Now is the time
+2. for all good men
+3. to come to the
+4. aid of their country.
+5. Now is the time
+6. for all good men
+7. to come to the
+8. aid of their country.
+9. Now is the time
+10. (10 lines)
+jlantos1@vm71:~/cs240/hw5$ cat tail3.in
+1. Now is the time
+2. for all good men
+3. to come to the
+4. aid of their country.
+5. Now is the time
+6. for all good men
+7. to come to the
+8. aid of their country.
+9. Now is the time
+10. for all good men
+11. (11 lines)
+jlantos1@vm71:~/cs240/hw5$ cat tail4.in
+1. Now is the time
+2. for all good men
+3. to come to the
+4. aid of their country.
+5. Now is the time
+6. for all good men
+7. to come to the
+8. aid of their country.
+9. Now is the time
+10. for all good men
+11. to come to the
+12. aid of their country.
+13. Now is the time
+14. for all good men
+15. to come to the
+16. aid of their country.
+17. Now is the time
+18. for all good men
+19. to come to the
+20. aid of their country.
+21. (twice as many lines)
+jlantos1@vm71:~/cs240/hw5$ make -f maketail
+make: `tail' is up to date.
+jlantos1@vm71:~/cs240/hw5$ ./tail -4 < tail1.[K[K4[K1.in > tail1.out
+jlantos1@vm71:~/cs240/hw5$ cat tail1.out
+5. Now is the time
+
+6. for all good men
+
+7. (less than 10 lines)
+
+4. aid of their country.
+
+jlantos1@vm71:~/cs240/hw5$ cat tail1.out[19@./tail -4 < tail1.in >[C[C[C[C[C[C[C[C[C[C[1P[1@2[C[C[C[C[C[C[C[C[C[C[C[1P.out2.out
+jlantos1@vm71:~/cs240/hw5$ ./tail -4 < tail2.in > tail2.out[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[19Pcat tail1.out[1P.out2.out
+9. Now is the time
+
+10. (10 lines)
+
+7. to come to the
+
+8. aid of their country.
+
+jlantos1@vm71:~/cs240/hw5$ cat tail2.out[19@./tail -4 < tail2.in >[C[C[C[C[C[C[C[C[C[C[1P[1@4[1P[1@3[C[C[C[C[C[C[C[C[C[C[C[C[1P.out3.out
+jlantos1@vm71:~/cs240/hw5$ ./tail -4 < tail3.in > tail3.out[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[19Pcat tail2.out[1P.out3.out
+9. Now is the time
+
+10. for all good men
+
+11. (11 lines)
+
+8. aid of their country.
+
+jlantos1@vm71:~/cs240/hw5$ cat tail3.out[19@./tail -4 < tail3.in >[C[C[C[C[C[C[C[C[C[C[C[1P[1@8[C[C[C[C[C[C[C[C[1P[1@4[C[C[C[C[C[C[C[C[C[C[C[1P.out4.out
+jlantos1@vm71:~/cs240/hw5$ ./tail -8 < tail4.in > tail4.out[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[19Pcat tail3.out[1P.out4.out
+17. Now is the time
+
+18. for all good men
+
+19. to come to the
+
+20. aid of their country.
+
+21. (twice as many lines)
+
+14. for all good men
+
+15. to come to the
+
+16. aid of their country.
+
+jlantos1@vm71:~/cs240/hw5$ exit
+exit
+
+Script done on Mon 15 Apr 2013 09:22:15 AM EDT

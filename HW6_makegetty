@@ -1,0 +1,30 @@
+# James Lantos, CS240, HW6 */
+# April 21, 2013 */
+#
+# makegetty
+#
+#
+
+
+# make compiles tail.c and linholder.c with the appropriate dependencies, and builds
+# the executable "tail" (tail should also be default target).  Also provide "make clean"
+# to remove the intermediate object files.  Also include the option to build the executable using the
+# -m32 switch for a 32-bit application
+ 
+cc =		gcc -m32
+
+gettysburg:		gettysburg.o modules.o getch.o
+		$(cc) -g -lm -o gettysburg gettysburg.o modules.o getch.o  
+
+# note that if getty.h changes, gettysburg.c and modules.c must be recompiled
+
+gettysburg.o:	gettysburg.c getty.h
+		$(cc) -g -c gettysburg.c
+
+modules.o:	modules.c getty.h
+		$(cc) -g -c modules.c
+
+getch.o: 	getch.c getty.h
+		$(cc) -g -c getch.c
+clean:
+		rm *.o
